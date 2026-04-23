@@ -36,6 +36,11 @@ function SearchBar() {
         if (!value.trim()) return;
 
         navigate(`/search?keyword=${encodeURIComponent(value)}`);
+
+        // 사용자를 강제 이동 시키는데, 그주소에 첫글자에 / 가 없으면
+        // 지금 현재의 주소 + search 로 이동시킴
+        // 그 주소에 첫글자가 / 로 시작하면
+        // /search 로 이동시킴
     };
 
     return (

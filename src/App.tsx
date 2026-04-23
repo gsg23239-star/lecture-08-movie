@@ -1,6 +1,6 @@
-import Home from "./pages/Home";
-import Search from "./pages/Search";
-import Detail from "./pages/Detail";
+import Home from "./routes/Home";
+import Search from "./routes/Search.tsx";
+import Detail from "./routes/Detail.tsx";
 import { BrowserRouter, Route, Routes } from "react-router";
 
 export default function App() {

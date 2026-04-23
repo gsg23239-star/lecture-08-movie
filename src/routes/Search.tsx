@@ -37,43 +37,47 @@ const ErrorMsg = styled.p`
 `;
 
 function Search() {
-    const [params] = useSearchParams();
-    const keyword = params.get("keyword") || "";
-
-    const [results, setResults] = useState<MovieItem[]>([]);
+    const [list, setList] = useState<MovieItem[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
+    const [searchparams] = useSearchParams();
+    const  k = searchparams.get("keyword");
+
     useEffect(() => {
-        if (!keyword) return;
+        if (!k) return;
+
+        setLoading(true);
+        setList({});
+        setError("");
 
         fetch(`https://www.omdbapi.com/?apikey=6a0a8eb4&s=${encodeURIComponent(keyword)}`)
             .then(res => res.json())
-            .then((data: SearchResponse) => {
-                if (data.Response === "False") {
-                    setError(data.Error || "검색 결과가 없습니다.");
-                    setResults([]);
-                } else {
-                    setResults(data.Search);
-                }
-                setLoading(false);
-            });
-    }, [keyword]);
+            .then((json: ApiResponseType) => {
+                    setlist(json.search);
+                    setLoading(false);
+                })
+                .catch(err => {
+                    console.log(err);
+                    setError(err);
+                    setLoading(false);
+            })
+    }, [k]);
 
     return (
-        <Wrapper>
-            <h2>Search results for: "{keyword}"</h2>
+        <div>
+            <h2>검색 키워드 : {k}</h2>
 
             {loading && <p>Loading...</p>}
-            {error && <ErrorMsg>{error}</ErrorMsg>}
+            {error && <p>{error}</p>}
 
-            <List>
-                {results.map(movie => (
-                    <MovieCard key={movie.imdbID} movie={movie} />
-                ))}
-            </List>
-        </Wrapper>
+            <SearchBar />
+
+            <list>
+
+            {list.map((value, index) => <div key={index}>
+            <MovieCard movie={value} key={index}/>
+    </div>;
     );
-}
 
 export default Search;
