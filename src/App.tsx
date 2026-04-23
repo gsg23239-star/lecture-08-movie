@@ -1,52 +1,16 @@
-import { useState } from "react";
+import Home from "./pages/Home";
+import Search from "./pages/Search";
+import Detail from "./pages/Detail";
+import { BrowserRouter, Route, Routes } from "react-router";
 
-type MovieItem = {
-    imdbID: string;
-    Poster: string;
-    Title: string;
-    Year : string;
-};
-
-function App() {
-    const [keyword, setKeyword] = useState("");
-    const [movies, setMovies] = useState([]);
-
-    const SearchMovie = () => {
-        fetch(`https://www.omdbapi.com/?apikey=6a0a8eb4&s=${keyword}`)
-            .then((res) => res.json())
-            .then((data) => console.log(data,Search));
-    };
-
-    {movies.map((movie) => (
-        <div key={movie.imdbID}>
-            <img src={movie.Poster} width="100" />
-            <h3>{movie.Title}</h3>
-            <p>{movie.Year}</p>
-        </div>
-    ))}
-
+export default function App() {
     return (
-        <div>
-            <h1>영화 검색</h1>
-
-            <input
-                type="text"
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                placeholder="영화 제목 입력"
-            />
-
-            <button onClick={SearchMovie}>검색</button>
-
-            {Movie.map(Movie) => (
-                <div key={MOVIE.imdbID}>
-                    <img src={Movie.Poster} width="100" />
-                    <h3>{Movie.Title}</h3>
-                    <p>{Movie.Year}</p>
-                </div>
-            ))}
-        </div>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/search" element={<Search />} />
+                <Route path="/movie/:id" element={<Detail />} />
+            </Routes>
+        </BrowserRouter>
     );
 }
-
-export default App;
