@@ -1,56 +1,17 @@
+import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useNavigate, useParams } from "react-router";
 
-interface MovieDetail {
+type MovieDetail = {
     Title: string;
     Year: string;
     Poster: string;
     Plot: string;
     Genre: string;
     Director: string;
-}
+};
 
-export default function Detail() {
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const [data, setData] = useState<MovieDetail | null>(null);
-
-    useEffect(() => {
-        fetch(`https://www.omdbapi.com/?apikey=6a0a8eb4&i=${id}&plot=full`)
-            .then(res => res.json())
-            .then((json: MovieDetail) => {
-                setData(json);
-            })
-            .catch(() => {
-                console.error("상세 데이터를 불러오는 중 오류 발생");
-            });
-    }, [id]);
-
-    if (!data) return <p>Loading...</p>;
-
-    return (
-        <Wrapper>
-            <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
-
-            <img src={data.Poster} alt={data.Title} />
-
-            <h1>{data.Title}</h1>
-            <p>
-                <strong>Year:</strong> {data.Year}
-            </p>
-            <p>
-                <strong>Genre:</strong> {data.Genre}
-            </p>
-            <p>
-                <strong>Director:</strong> {data.Director}
-            </p>
-            <Plot>{data.Plot}</Plot>
-        </Wrapper>
-    );
-}
-
-const Wrapper = styled.div`
+const Wrap = styled.div`
     padding: 40px;
 
     img {
@@ -75,6 +36,48 @@ const BackButton = styled.button`
 `;
 
 const Plot = styled.p`
-    margin-top: 20px;
     line-height: 1.6;
+    margin-top: 20px;
 `;
+
+function Detail() {
+    const { id } = useParams();
+    const [movie, setMovie] = useState<MovieDetail | null>(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!id) return;
+        fetch(`https://www.omdbapi.com/?apikey=6a0a8eb4&i=${id}&plot=full`)
+            .then(res => res.json())
+            .then((json: MovieDetail) => {
+                setMovie(json);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }, [id]);
+
+    if (!movie) return <p>Loading...</p>;
+
+    return (
+        <Wrap>
+            <BackButton onClick={() => navigate(-1)}>&larr; Back</BackButton>
+
+            <img src={movie.Poster} alt={movie.Title} />
+
+            <h1>{movie.Title}</h1>
+            <p>
+                <strong>Year:</strong> {movie.Year}
+            </p>
+            <p>
+                <strong>Genre:</strong> {movie.Genre}
+            </p>
+            <p>
+                <strong>Director:</strong> {movie.Director}
+            </p>
+            <Plot>{movie.Plot}</Plot>
+        </Wrap>
+    );
+}
+
+export default Detail;

@@ -1,71 +1,61 @@
 import { useEffect, useState } from "react";
-import styled from "styled-components";
-import MovieCard from "../components/MovieCard";
 import { useSearchParams } from "react-router";
+import SearchBar from "../components/SearchBar.tsx";
+import MovieCard from "../components/MovieCard.tsx";
+import styled from "styled-components";
 
-interface MovieItem {
+export type MovieItem = {
     imdbID: string;
     Poster: string;
     Title: string;
     Year: string;
-}
+};
 
-interface SearchResponse {
-    Search: MovieItem[];
-    totalResults: string;
-    Response: "True" | "False";
-    Error?: string;
-}
+type ApiResponseType = { Search: MovieItem[] };
 
-const Wrapper = styled.div`
-    padding: 40px;
-
-    h2 {
-        margin-bottom: 20px;
-    }
+const Wrap = styled.div`
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
 `;
 
 const List = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
-`;
-
-const ErrorMsg = styled.p`
-    color: red;
-    margin-top: 20px;
+    margin-top: 100px;
 `;
 
 function Search() {
     const [list, setList] = useState<MovieItem[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(true); // loading에 대한 상태값 관리
+    const [error, setError] = useState(""); // 에러가 났을 때 화면에 출력해야 하는 string
 
-    const [searchparams] = useSearchParams();
-    const  k = searchparams.get("keyword");
+    const [searchParams] = useSearchParams();
+    const k = searchParams.get("keyword");
 
     useEffect(() => {
         if (!k) return;
 
         setLoading(true);
-        setList({});
+        setList([]);
         setError("");
 
-        fetch(`https://www.omdbapi.com/?apikey=6a0a8eb4&s=${encodeURIComponent(keyword)}`)
+        fetch(`https://www.omdbapi.com/?apikey=6a0a8eb4&s=${k}`)
             .then(res => res.json())
             .then((json: ApiResponseType) => {
-                    setlist(json.search);
-                    setLoading(false);
-                })
-                .catch(err => {
-                    console.log(err);
-                    setError(err);
-                    setLoading(false);
+                setList(json.Search);
+                setLoading(false);
             })
+            .catch(err => {
+                console.log(err);
+                setError("검색하는데 오류가 발생하였습니다.");
+                setLoading(false);
+            });
     }, [k]);
 
     return (
-        <div>
+        <Wrap>
             <h2>검색 키워드 : {k}</h2>
 
             {loading && <p>Loading...</p>}
@@ -73,11 +63,13 @@ function Search() {
 
             <SearchBar />
 
-            <list>
-
-            {list.map((value, index) => <div key={index}>
-            <MovieCard movie={value} key={index}/>
-    </div>;
+            <List>
+                {list.map((value, index) => (
+                    <MovieCard movie={value} key={index} />
+                ))}
+            </List>
+        </Wrap>
     );
+}
 
 export default Search;

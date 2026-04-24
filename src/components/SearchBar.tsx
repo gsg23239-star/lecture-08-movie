@@ -1,62 +1,51 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, type SubmitEvent, type ChangeEvent } from "react";
 import { useNavigate } from "react-router";
 
-const Wrapper = styled.div`
+const Wrap = styled.form`
     display: flex;
     gap: 10px;
-    width: 400px;
 `;
 
 const Input = styled.input`
-    flex: 1;
     padding: 12px;
     border: 1px solid #ccc;
     border-radius: 8px;
 `;
 
 const Button = styled.button`
-    padding: 12px 16px;
-    background: #ff5959;
+    padding: 12px;
+    background-color: #ff5959;
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-
-    &:hover {
-        background: #ff7a7a;
-    }
 `;
 
 function SearchBar() {
-    const [value, setValue] = useState("");
+    const [keyword, setKeyword] = useState("");
     const navigate = useNavigate();
 
-    const handleSearch = () => {
-        if (!value.trim()) return;
-
-        navigate(`/search?keyword=${encodeURIComponent(value)}`);
-
-        // 사용자를 강제 이동 시키는데, 그주소에 첫글자에 / 가 없으면
+    const moveToSearch = (event: SubmitEvent<HTMLFormElement>) => {
+        // 사용자를 강제이동
+        event.preventDefault();
+        if (!keyword.trim()) return;
+        navigate(`/search?keyword=${encodeURIComponent(keyword)}`);
+        // 사용자를 이동 시키는데 (Link나 a태그나, navigate), 그 주소에 첫 글자가 / 로 시작하지 않으면
         // 지금 현재의 주소 + search 로 이동시킴
-        // 그 주소에 첫글자가 / 로 시작하면
+        // 그 주소에 첫 글자가 / 로 시작하면
         // /search 로 이동시킴
     };
 
+    const changeInput = (event: ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
+        setKeyword(event.target.value);
+    };
+
     return (
-        <Wrapper>
-            <Input
-                value={value}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setValue(e.target.value)
-                }
-                placeholder="Search movies..."
-                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
-                    e.key === "Enter" && handleSearch()
-                }
-            />
-            <Button onClick={handleSearch}>Search</Button>
-        </Wrapper>
+        <Wrap onSubmit={moveToSearch}>
+            <Input onChange={changeInput} />
+            <Button type={"submit"}>Search</Button>
+        </Wrap>
     );
 }
 

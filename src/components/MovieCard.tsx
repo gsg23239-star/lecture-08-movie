@@ -1,11 +1,12 @@
-import styled from "styled-components";
+import type { MovieItem } from "../routes/Search.tsx";
 import { Link } from "react-router";
+import styled from "styled-components";
 
 type Props = {
     movie: MovieItem;
 };
 
-const Card = styled<Link>`
+const Card = styled(Link)`
     width: 200px;
     border-radius: 12px;
     padding: 10px;
@@ -15,31 +16,7 @@ const Card = styled<Link>`
     flex-direction: column;
     gap: 8px;
     transition: all 0.5s;
-    box-shadow: 0 4px 10px
-    img {
-        width: 100%;
-        
-    }
-`;
-
-interface MovieItem {
-    imdbID: string;
-    Poster: string;
-    Title: string;
-    Year: string;
-}
-
-const Card = styled(Link)`
-    width: 200px;
-    border-radius: 12px;
-    padding: 10px;
-    background: white;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    text-decoration: none;
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 
     img {
         width: 100%;
@@ -48,17 +25,16 @@ const Card = styled(Link)`
 
     &:hover {
         transform: scale(1.03);
-        transition: 0.1s;
     }
 `;
 
-function MovieCard({ movie }: { movie: MovieItem }) {
+function MovieCard({ movie }: Props) {
     return (
-        <Link to={`/movie/${movie.imdbID}`}>
+        <Card to={`/detail/${movie.imdbID}`}>
             <img src={movie.Poster} alt={movie.Title} />
             <h3>{movie.Title}</h3>
             <span>{movie.Year}</span>
-        </Link>
+        </Card>
     );
 }
 

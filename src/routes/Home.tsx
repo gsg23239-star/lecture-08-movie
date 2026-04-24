@@ -1,7 +1,7 @@
-import styles from "./Home.module.css";
 import styled from "styled-components";
+import SearchBar from "../components/SearchBar.tsx";
 
-const Wrap= styled.div`
+const Wrap = styled.div`
     padding: 30px;
 `;
 
